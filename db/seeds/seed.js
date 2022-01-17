@@ -59,21 +59,25 @@ const seed = (data) => {
       .then(() => {
         const formattedCategoryData = categoryData.map((category) => [
           category.slug,
-          category.description
-        ])
+          category.description,
+        ]);
         const sqlCategory = format(
-           `INSERT INTO categories (slug, description) VALUES %L RETURNING*;`, formattedCategoryData )
-           return db.query(sqlCategory);
+          `INSERT INTO categories (slug, description) VALUES %L RETURNING*;`,
+          formattedCategoryData
+        );
+        return db.query(sqlCategory);
       })
       .then(() => {
         const formattedUserData = userData.map((user) => [
           user.username,
           user.name,
-          user.avatar_url
-        ])
+          user.avatar_url,
+        ]);
         const sqlUsers = format(
-          `INSERT INTO users (username, name, avatar_url) VALUES %L RETURNING*;`, formattedUserData)
-          return db.query(sqlUsers)
+          `INSERT INTO users (username, name, avatar_url) VALUES %L RETURNING*;`,
+          formattedUserData
+        );
+        return db.query(sqlUsers);
       })
       .then(() => {
         const formattedReviewData = reviewData.map((review) => [
@@ -83,10 +87,12 @@ const seed = (data) => {
           review.review_img_url,
           review.category,
           review.created_at,
-          review.votes
-        ])
+          review.votes,
+        ]);
         const sqlReviews = format(
-          `INSERT INTO reviews (title, designer, owner, review_img_url, category, created_at, votes) VALUES %L RETURNING*;`, formattedReviewData)
+          `INSERT INTO reviews (title, designer, owner, review_img_url, category, created_at, votes) VALUES %L RETURNING*;`,
+          formattedReviewData
+        );
       })
       .then(() => {
         const formattedCommentData = commentData.map((comment) => [
@@ -94,13 +100,15 @@ const seed = (data) => {
           comment.votes,
           comment.author,
           comment.review_id,
-          comment.created_at
-        ])
-      const sqlComments = format(
-        `INSERT INTO comments (body, votes, author, review_id, created_at) VALUES %L RETURNING*;`, formattedCommentData)
+          comment.created_at,
+        ]);
+        const sqlComments = format(
+          `INSERT INTO comments (body, votes, author, review_id, created_at) VALUES %L RETURNING*;`,
+          formattedCommentData
+        );
       })
       .then(() => {
-        console.log('ALL DATA INSERTED')
+        console.log('ALL DATA INSERTED');
       })
   );
 };

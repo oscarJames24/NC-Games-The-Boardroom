@@ -51,9 +51,9 @@ const seed = (data) => {
       .then(() => {
         return db.query(`
       CREATE TABLE comments (     
-        comment_id INT PRIMARY KEY,
+        comment_id SERIAL PRIMARY KEY,
         author VARCHAR(255) REFERENCES users(username),
-        review_id INT REFERENCES reviews(review_id)
+        review_id INT REFERENCES reviews(review_id),
         votes INT DEFAULT 0 NOT NULL,
         created_at DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
         body VARCHAR(1000) NOT NULL 

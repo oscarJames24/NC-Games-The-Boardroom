@@ -1,4 +1,4 @@
-const { fetchAllCategories, fetchReviewById } = require('../Models/nc_games_models')
+const { fetchAllCategories, fetchReviewById, selectReviews, fetchCommentsByReviewId } = require('../Models/nc_games_models')
 
 exports.getWelcomeMessage = (req, res) => {
     res.status(200).send({ message: 'all ok' });
@@ -15,9 +15,34 @@ exports.getAllCategories = (req, res, next) => {
 }
 
 exports.getReviewById = (req, res, next) => {
-    fetchReviewById()
+    // const review_ID = req.params.review_id
+    // fetchReviewById(review_ID)
+    fetchReviewById(req.params.review_id)
     .then((reviews) => {
         res.status(200).send({reviews})
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+}
+
+exports.getReviewsSorted = (req, res, next) => {
+    const { sort_by, order, category } = req.query;
+    //console.log(req, 'req query getRevsSorted')
+    selectReviews(sort_by, order, category)
+    .then((reviews) => {
+        res.status(200).send({reviews})
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+}
+
+exports.getCommentsByReviewId = (req, res, next) => {
+    fetchCommentsByReviewId(req.params.review_id)
+    .then((comments) => {
+      console.log(comments, 'comments back in controller')
+        res.status(200).send(comments)
     })
     .catch((err) => {
         console.log(err)

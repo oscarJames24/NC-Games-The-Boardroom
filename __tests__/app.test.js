@@ -43,35 +43,76 @@ describe('/api/categories', () => {
         .get('/api/cartegeries')
         .expect(404)
         .then((result) => {
-          expect(result.body).toEqual({ msg: 'Invalid URL - Page does not exist'})
-        })
+          expect(result.body).toEqual({ msg: 'Invalid URL - Page does not exist' });
+        });
     });
   });
 });
 
-describe.only(`/api/reviews`, () => {
+describe(`/api/reviews`, () => {
   describe('GET', () => {
-    test(`status 200: returns object with "reviews key" with array of objects with required keys `, () => { return request(app)
-      .get('/api/reviews/1')
-      .expect(200)
-      .then((result) => {
-        expect(result.body.reviews).toHaveLength(9);
-        result.body.reviews.forEach((review) => {
-          expect(review).toEqual(
-            expect.objectContaining({
-              review_id: expect.any(Number),
-              title: expect.any(String),
-              review_body: expect.any(String),
-              designer: expect.any(String),
-              review_img_URL: expect.any(String),
-              votes: expect.any(Number),
-              category: expect.any(String),
-              owner: expect.any(String),
-              created_at: expect.any(String),
-            })
-          )
-        })
-      })
+    test(`status 200: returns object with "reviews" key with array of objects with required keys `, () => {
+      return request(app)
+        .get('/api/reviews/1')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.reviews).toEqual({
+            review_id: expect.any(Number),
+            title: expect.any(String),
+            review_body: expect.any(String),
+            designer: expect.any(String),
+            review_img_url: expect.any(String),
+            votes: expect.any(Number),
+            category: expect.any(String),
+            owner: expect.any(String),
+            created_at: expect.any(String),
+          });
+        });
     });
   });
-})
+  describe('QUERIES', () => {
+    test(`status 200: SORT BY DEFAULT - returns array of objects sorted by default of date in desc order`, () => {
+      return request(app)
+        .get('/api/reviews')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.reviews).toBeSortedBy('created_at', {
+            descending: true,
+          });
+        });
+    });
+    test(`status 200: SORT BY query - return array of reviews sorted by number of votes`, () => {
+      return request(app)
+      .get('/api/reviews?sort_by=votes&order=ASC')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.reviews).toBeSortedBy('votes', {
+          ascending: true,
+        })
+      })
+    })
+  });
+  describe('GET - review comments by ID', () => {
+    // MOVE THIS CODE UP TO OTHER GET REQUEST BY ID??
+    test('status 200: return array of comments by review_id with required comment properties', () => {
+      return request(app)
+      .get(`/api/reviews/3/comments`)
+      .expect(200)
+      .then((res) => {
+       expect(res.body).toHaveLength(3);
+        res.body.forEach((comments) => {
+          expect(comments).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String)
+            })
+          );
+        });
+      })
+    })
+  })
+});
+

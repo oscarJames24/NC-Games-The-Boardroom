@@ -1,4 +1,4 @@
-const { fetchAllCategories, fetchReviewById, selectReviews, fetchCommentsByReviewId } = require('../Models/nc_games_models')
+const { fetchAllCategories, fetchReviewById, selectReviews, fetchCommentsByReviewId, removeCommentById } = require('../Models/nc_games_models')
 
 exports.getWelcomeMessage = (req, res) => {
     res.status(200).send({ message: 'all ok' });
@@ -46,5 +46,17 @@ exports.getCommentsByReviewId = (req, res, next) => {
     })
     .catch((err) => {
         console.log(err)
+    })
+}
+
+exports.deleteComment = (req, res, next) => {
+    const { comment_id } = req.params;
+    removeCommentById(comment_id)
+    .then(() => {
+        res.status(204).send('');
+    })
+    .catch((err) => {
+        console.log(err, 'err in controller')
+        next(err)
     })
 }

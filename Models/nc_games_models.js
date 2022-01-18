@@ -58,3 +58,15 @@ WHERE review_id=$1`,
     return res.rows;
 })
 }
+
+exports.removeCommentById = (comment_id) => {
+  return db.query(`DELETE FROM comments
+  WHERE comment_id=$1
+  RETURNING*`, [comment_id])
+  .then((res) => {
+    console.log(res.rowCount, 'row count')
+    if (res.rowCount !== 1) {
+      return Promise.reject({status: 404 , msg: 'Nothing deleted - Restaurant ID does not exist'})
+  }
+  })
+}

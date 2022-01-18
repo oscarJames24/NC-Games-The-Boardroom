@@ -83,36 +83,51 @@ describe(`/api/reviews`, () => {
     });
     test(`status 200: SORT BY query - return array of reviews sorted by number of votes`, () => {
       return request(app)
-      .get('/api/reviews?sort_by=votes&order=ASC')
-      .expect(200)
-      .then((res) => {
-        expect(res.body.reviews).toBeSortedBy('votes', {
-          ascending: true,
-        })
-      })
-    })
+        .get('/api/reviews?sort_by=votes&order=ASC')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.reviews).toBeSortedBy('votes', {
+            ascending: true,
+          });
+        });
+    });
   });
   describe('GET - review comments by ID', () => {
     // MOVE THIS CODE UP TO OTHER GET REQUEST BY ID??
     test('status 200: return array of comments by review_id with required comment properties', () => {
       return request(app)
-      .get(`/api/reviews/3/comments`)
-      .expect(200)
-      .then((res) => {
-       expect(res.body).toHaveLength(3);
-        res.body.forEach((comments) => {
-          expect(comments).toEqual(
-            expect.objectContaining({
-              comment_id: expect.any(Number),
-              votes: expect.any(Number),
-              created_at: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String)
-            })
-          );
+        .get(`/api/reviews/3/comments`)
+        .expect(200)
+        .then((res) => {
+          expect(res.body).toHaveLength(3);
+          res.body.forEach((comments) => {
+            expect(comments).toEqual(
+              expect.objectContaining({
+                comment_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                author: expect.any(String),
+                body: expect.any(String),
+              })
+            );
+          });
         });
-      })
-    })
-  })
+    });
+  });
 });
 
+describe.only('api/comments/:comment_id - delete', () => {
+  describe('DELETE', () => {
+    test('status 204: deletes specified comment from database and returns no content', () => {
+      return request(app).delete('/api/comments/1').expect(204);
+    });
+    test('status:404 and returns an error message to say couldnt delete as ID does not exist', () => {
+      return request(app)
+        .delete('/api/comments/79')
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe('Nothing deleted - Restaurant ID does not exist');
+        });
+    });
+  });
+});

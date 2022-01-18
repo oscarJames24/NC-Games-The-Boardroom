@@ -1,8 +1,13 @@
 const db = require('../connection');
 const format = require('pg-format');
+const {dropTables, createTables, insertDat, insertData } = require('../../Utility/seed-functions')
 const seed = (data) => {
   const { categoryData, commentData, reviewData, userData } = data;
 
+  // SEED FUNCTION SHEET SET UP - REVISIT TO GE WORKING - didn't seem to be dropping tables
+  // dropTables();
+  // createTables();
+  // insertData();
   return (
     db
       .query(`DROP TABLE IF EXISTS comments;`)
@@ -17,7 +22,7 @@ const seed = (data) => {
         return db.query(`
     CREATE TABLE categories (
         slug VARCHAR(255) PRIMARY KEY,
-        description VARCHAR(500) 
+        description VARCHAR(500) NOT NULL
     )
     ;`);
       })
@@ -25,18 +30,19 @@ const seed = (data) => {
         return db.query(`
     CREATE TABLE users (
         username VARCHAR(255) PRIMARY KEY,
-        avatar_url VARCHAR(2048),
-        name VARCHAR(255)
+        avatar_url VARCHAR(2048) NOT NULL,
+        name VARCHAR(255) NOT NULL
     );`);
       })
       .then(() => {
         return db.query(`
       CREATE TABLE reviews (
-        title VARCHAR(255) PRIMARY KEY,
-        review_body VARCHAR(1000),
-        designer VARCHAR(255),
-        reiew_img_url VARCHAR(2048) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
-        votes INT DEFAULT 0,
+        review_id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        review_body VARCHAR(1000) NOT NULL,
+        designer VARCHAR(255) NOT NULL,
+        review_img_url VARCHAR(2048) DEFAULT 'https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg',
+        votes INT DEFAULT 0 NOT NULL,
         category VARCHAR(255) REFERENCES categories(slug),
         owner VARCHAR(255) REFERENCES users(username),
         created_at DATE NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -47,9 +53,10 @@ const seed = (data) => {
       CREATE TABLE comments (     
         comment_id INT PRIMARY KEY,
         author VARCHAR(255) REFERENCES users(username),
-        votes INT DEFAULT 0,
+        review_id INT REFERENCES reviews(review_id)
+        votes INT DEFAULT 0 NOT NULL,
         created_at DATE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        body VARCHAR(1000) 
+        body VARCHAR(1000) NOT NULL 
       );`);
       })
       .then(() => {
@@ -82,6 +89,7 @@ const seed = (data) => {
       .then(() => {
         const formattedReviewData = reviewData.map((review) => [
           review.title,
+          review.review_body,
           review.designer,
           review.owner,
           review.review_img_url,
@@ -90,9 +98,10 @@ const seed = (data) => {
           review.votes,
         ]);
         const sqlReviews = format(
-          `INSERT INTO reviews (title, designer, owner, review_img_url, category, created_at, votes) VALUES %L RETURNING*;`,
+          `INSERT INTO reviews (title, review_body, designer, owner, review_img_url, category, created_at, votes) VALUES %L RETURNING*;`,
           formattedReviewData
         );
+        return db.query(sqlReviews);
       })
       .then(() => {
         const formattedCommentData = commentData.map((comment) => [
@@ -106,6 +115,7 @@ const seed = (data) => {
           `INSERT INTO comments (body, votes, author, review_id, created_at) VALUES %L RETURNING*;`,
           formattedCommentData
         );
+        return db.query(sqlComments);ç
       })
       .then(() => {
         console.log('ALL DATA INSERTED');

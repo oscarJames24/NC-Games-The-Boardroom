@@ -5,3 +5,9 @@ exports.fetchAllCategories = () => {
         return result.rows
     })
 }
+
+exports.fetchReviewById = () => {
+    return db.query(`SELECT * FROM reviews;`).then((result) => {
+        return result.rows
+    })
+}

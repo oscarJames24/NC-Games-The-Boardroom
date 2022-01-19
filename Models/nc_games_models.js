@@ -1,4 +1,5 @@
 const db = require('../db/connection.js');
+const { checkCategoryExists } = require('../Utility/functions');
 
 exports.fetchAllCategories = () => {
   return db.query('SELECT * FROM categories;').then((result) => {
@@ -13,68 +14,96 @@ exports.fetchReviewById = (review_ID) => {
 };
 
 exports.selectReviews = (sort_by = 'created_at', order = 'DESC', category) => {
-    console.log(sort_by, 'sort by')
-    console.log(order, 'order')
-    console.log(category, 'cat')
 
-  const validKeys = [
-      'review_id',
-      'title',
-      'designer',
-      'votes', 
-      'category',
-      'owner',
-      'created_at'
-    ];
+  // all working here in terms of throwin the error (logged in testing error) but isn't caught in the controller so doesn't pass the test.
 
- // code stumbles here.... need fail safe if incorrect key is passed
-//   if (!validKeys.includes(sort_by) || !validKeys.includes(order)) {
-//     return Promise.reject({ status: 400, msg: 'Bad Request (from valid keys reject)' });
-//   }
+  const allowedSortBys = ['title', 'designer', 'votes', 'category', 'owner', 'created_at'];
+  if (!allowedSortBys.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: 'Bad Request - unsortable' });
+  }
 
-  let queryString = `SELECT * FROM reviews`;
+  const allowedOrder = ['ASC', 'DESC', 'asc', 'desc', 'Asc', 'Desc'];
+  if (!allowedOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: 'Bad Request - order' });
+  }
+
   const queryValues = [];
+  let queryString = `SELECT * FROM reviews`;
+
 
   if (category) {
-    queryString += ` WHERE category = $1`;
-    queryValues.push(category);
+    checkCategoryExists(category).then((res) => {
+      if (res === 0) {
+        return Promise.reject({ status: 400, msg: 'Bad Request - category does not exist' });
+      } 
+    });
   }
+
+  if (category) {
+  queryString += ` WHERE category = $1`;
+  queryValues.push(category);
+  }
+
+  console.log(queryString, 'query string')
+  console.log(queryValues, 'query values')
 
   queryString += ` ORDER BY ${sort_by} ${order}`;
 
-
   return db.query(queryString, queryValues).then(({ rows }) => {
-    console.log(rows, 'query return');
     return rows;
   });
 };
 
 exports.fetchCommentsByReviewId = (review_id) => {
-return db.query(`SELECT comment_id, votes, created_at, author, body FROM comments 
-WHERE review_id=$1`, 
-[review_id])
-.then((res) => {
-   // console.log(res.rows);
-    return res.rows;
-})
-}
+  return db
+    .query(
+      `SELECT comment_id, votes, created_at, author, body FROM comments 
+WHERE review_id=$1`,
+      [review_id]
+    )
+    .then((res) => {
+      return res.rows;
+    });
+};
 
 exports.removeCommentById = (comment_id) => {
-  return db.query(`DELETE FROM comments
+  return db
+    .query(
+      `DELETE FROM comments
   WHERE comment_id=$1
-  RETURNING*`, [comment_id])
-  .then((res) => {
-    console.log(res.rowCount, 'row count')
-    if (res.rowCount !== 1) {
-      return Promise.reject({status: 404 , msg: 'Nothing deleted - Restaurant ID does not exist'})
-  }
-  })
-}
+  RETURNING*`,
+      [comment_id]
+    )
+    .then((res) => {
+      if (res.rowCount !== 1) {
+        return Promise.reject({
+          status: 404,
+          msg: 'Nothing deleted - Restaurant ID does not exist',
+        });
+      }
+    });
+};
 
 exports.insertCommentByReviewId = (review_id, newComment) => {
   const { username, body } = newComment;
-  return db.query(`INSERT INTO comments (author, review_id, body) VALUES ($1, $2, $3) RETURNING*;`,[username, review_id, body])
+  return db
+    .query(`INSERT INTO comments (author, review_id, body) VALUES ($1, $2, $3) RETURNING*;`, [
+      username,
+      review_id,
+      body,
+    ])
+    .then((res) => {
+      console.log(res);
+      return res.rows[0];
+    });
+};
+
+exports.updateReviewVotes = (review_id, reviewToUpdate) => {
+  const { inc_votes } = reviewToUpdate;
+  return db
+  .query(`UPDATE reviews SET votes = votes + $1 WHERE article_id=$2 RETURNING*;`,
+  [inc_votes, review_id])
   .then((res) => {
-    return res.rows[0]
+    return res.rows[0];
   })
 }

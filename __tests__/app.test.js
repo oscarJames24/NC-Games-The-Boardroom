@@ -81,6 +81,17 @@ describe(`/api/reviews`, () => {
           });
         });
     });
+    test(`status 200: SORT BY query - return array of reviews sorted by number of votes and filtered by category social deduction`, () => {
+      return request(app)
+        .get('/api/reviews?sort_by=votes&order=ASC&category=social deduction')
+        .expect(200)
+        .then((res) => {
+          expect(res.body.reviews).toHaveLength(11);
+          expect(res.body.reviews).toBeSortedBy('votes', {
+            ascending: true,
+          });
+        });
+    });
     test(`status 200: SORT BY query - return array of reviews sorted by number of votes`, () => {
       return request(app)
         .get('/api/reviews?sort_by=votes&order=ASC')
@@ -89,6 +100,14 @@ describe(`/api/reviews`, () => {
           expect(res.body.reviews).toBeSortedBy('votes', {
             ascending: true,
           });
+        });
+    });
+    test(`status 400: INVALID QUERY uses invalid keys so is rejected`, () => {
+      return request(app)
+        .get('/api/reviews?sort_by=votes&order=ASC&category=invalidCat')
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe('Bad Request - category does not exist')
         });
     });
   });
@@ -133,48 +152,71 @@ describe('api/comments/:comment_id - delete', () => {
 });
 
 describe('api/reviews/:review_id/comments - POST', () => {
-  test.only('status 201: requestbody accepts an object with username and body and responds with the posted comment', () => {
+  test('status 201: requestbody accepts an object with username and body and responds with the posted comment', () => {
     return request(app)
-    .post(`/api/reviews/3/comments`) 
-    .send({
-      username: 'mallionaire',
-      body: 'Woof woof gruff'
-    })
-    .expect(201)
-    .then((res) => {
-      console.log(res.body, 'res in testing')
-      const newComment = res.body.body
-      expect(newComment) 
-      .toBe('Woof woof gruff') 
-    })
+      .post(`/api/reviews/3/comments`)
+      .send({
+        username: 'mallionaire',
+        body: 'Woof woof gruff',
+      })
+      .expect(201)
+      .then((res) => {
+        console.log(res.body, 'res in testing');
+        const newComment = res.body.body;
+        expect(newComment).toBe('Woof woof gruff');
+      });
   });
 
   test('status 400: missing field - returns error message', () => {
     return request(app)
-    .post('api/reviews/3/comments')
-    .send({
-      username: 'mallionaire',
-    })
-    .expect(400)
-    .then((res) => {
-      expect(res.body.msg)
-      .toBe('Bad request') // use this with handlepsqlerrors
-    })
+      .post('/api/reviews/3/comments')
+      .send({
+        username: 'mallionaire',
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe('Invalid input - missing fields'); // use this with handlepsqlerrors
+      });
   });
 
-  test('status 200: extra fields - returns error message', () => {
+  test('status 400: extra fields - returns error message', () => {
     return request(app)
-    .post('api/reviews/3/comments')
-    .send({
-      username: 'Mallionaire',
-      body: 'Woof woof gruff',
-      extra_field: 'extra comment'
-    })
+      .post('/api/reviews/3/comments')
+      .send({
+        username: 'Mallionaire',
+        body: 'Woof woof gruff',
+        extra_field: 'extra comment',
+      })
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe('Invalid input - extra fields submitted'); // use this with handlepsqlerrors
+      });
+  });
+});
+
+describe.only('PATCH - api/review/:review_id ', () => {
+  test('Status 200: should amend reviews vote count by indicated amount - +1', () => {
+    const voteUpdate = { inc_votes: 1};
+    return request(app)
+    .patch('/api/review/1')
+    .send(voteUpdate)
     .expect(200)
     .then((res) => {
-      expect(res.body.msg)
-      .toBe('Bad request') // use this with handlepsqlerrors
+      expect(res.body.review).toBeInstanceOf(Object);
+      expect(res.body.review).toEqual({
+        review_id: 1,
+        title: 'Agricola',
+        designer: 'Uwe Rosenberg',
+        owner: 'mallionaire',
+        review_img_url:
+          'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+        review_body: 'Farmyard fun!',
+        category: 'euro game',
+        created_at: new Date(1610964020514),
+        votes: 2
+      })
     })
+    
   });
   
 });

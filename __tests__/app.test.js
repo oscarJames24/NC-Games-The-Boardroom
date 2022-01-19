@@ -116,7 +116,7 @@ describe(`/api/reviews`, () => {
   });
 });
 
-describe.only('api/comments/:comment_id - delete', () => {
+describe('api/comments/:comment_id - delete', () => {
   describe('DELETE', () => {
     test('status 204: deletes specified comment from database and returns no content', () => {
       return request(app).delete('/api/comments/1').expect(204);
@@ -130,4 +130,51 @@ describe.only('api/comments/:comment_id - delete', () => {
         });
     });
   });
+});
+
+describe('api/reviews/:review_id/comments - POST', () => {
+  test.only('status 201: requestbody accepts an object with username and body and responds with the posted comment', () => {
+    return request(app)
+    .post(`/api/reviews/3/comments`) 
+    .send({
+      username: 'mallionaire',
+      body: 'Woof woof gruff'
+    })
+    .expect(201)
+    .then((res) => {
+      console.log(res.body, 'res in testing')
+      const newComment = res.body.body
+      expect(newComment) 
+      .toBe('Woof woof gruff') 
+    })
+  });
+
+  test('status 400: missing field - returns error message', () => {
+    return request(app)
+    .post('api/reviews/3/comments')
+    .send({
+      username: 'mallionaire',
+    })
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg)
+      .toBe('Bad request') // use this with handlepsqlerrors
+    })
+  });
+
+  test('status 200: extra fields - returns error message', () => {
+    return request(app)
+    .post('api/reviews/3/comments')
+    .send({
+      username: 'Mallionaire',
+      body: 'Woof woof gruff',
+      extra_field: 'extra comment'
+    })
+    .expect(200)
+    .then((res) => {
+      expect(res.body.msg)
+      .toBe('Bad request') // use this with handlepsqlerrors
+    })
+  });
+  
 });

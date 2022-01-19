@@ -70,3 +70,11 @@ exports.removeCommentById = (comment_id) => {
   }
   })
 }
+
+exports.insertCommentByReviewId = (review_id, newComment) => {
+  const { username, body } = newComment;
+  return db.query(`INSERT INTO comments (author, review_id, body) VALUES ($1, $2, $3) RETURNING*;`,[username, review_id, body])
+  .then((res) => {
+    return res.rows[0]
+  })
+}

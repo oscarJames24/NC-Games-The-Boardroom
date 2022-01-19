@@ -194,7 +194,7 @@ describe('api/reviews/:review_id/comments - POST', () => {
   });
 });
 
-describe.only('PATCH - api/review/:review_id ', () => {
+describe('PATCH - api/review/:review_id ', () => {
   test('Status 200: should amend reviews vote count by indicated amount - +1', () => {
     const voteUpdate = { inc_votes: 1};
     return request(app)

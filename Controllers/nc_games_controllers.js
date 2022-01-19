@@ -5,8 +5,14 @@ const {
   fetchCommentsByReviewId,
   removeCommentById,
   insertCommentByReviewId,
-  updateReviewVotes
+  updateReviewVotes,
+  fetchAllEndPoints
 } = require('../Models/nc_games_models');
+const endpoints = require('./endpoints.json')
+
+exports.fetchAllEndPoints = (req, res) => {
+  res.send(endpoints)
+}
 
 exports.getWelcomeMessage = (req, res) => {
   res.status(200).send({ message: 'all ok' });

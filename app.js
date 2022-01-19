@@ -1,13 +1,15 @@
 const express = require('express');
+const fs = require('fs/promises')
 const {
-  getWelcomeMessage,
+  getWelcomeMessage,  
   getAllCategories,
   getReviewById,
   getReviewsSorted,
   getCommentsByReviewId,
   deleteComment,
   postCommentByReviewId,
-  patchReviewVotes
+  patchReviewVotes,
+  getAllEndPoints
 } = require('./Controllers/nc_games_controllers');
 const {
   handle404s,
@@ -19,6 +21,7 @@ const app = express();
 
 app.use(express.json());
 
+app.get('/api', getAllEndPoints);
 app.get('/api', getWelcomeMessage);
 app.get(`/api/categories`, getAllCategories);
 app.get(`/api/reviews/:review_id`, getReviewById);

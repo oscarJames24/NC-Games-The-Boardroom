@@ -1,4 +1,5 @@
 const db = require('../db/connection.js');
+const fs = require('fs/promises')
 const { checkCategoryExists } = require('../Utility/functions');
 
 exports.fetchAllCategories = () => {

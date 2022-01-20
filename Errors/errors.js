@@ -1,8 +1,11 @@
 exports.handle404s = (req, res) => {
+  console.log('gets to 404s')
   res.status(404).send({ msg: 'Invalid URL - Page does not exist' });
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
+  console.log(err, 'gets to psql')
+
   if (err.code === '22P02') {
     res.status(400).send({ msg: 'Bad Requst' });
   } else if (err.code === '23503') {
@@ -15,6 +18,8 @@ exports.handlePsqlErrors = (err, req, res, next) => {
 };
 
 exports.handleCustomErrors = (err, req, res, next) => {
+  console.log('gets to custom')
+
   if (err.status) {
     console.log(err, 'custom errors')
     res.status(err.status).send({ msg: err.msg });

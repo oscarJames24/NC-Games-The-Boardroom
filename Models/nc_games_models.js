@@ -169,18 +169,19 @@ exports.removeCommentById = (comment_id) => {
       RETURNING*`,
       [comment_id]
     )
-    .then((res) => {
-      if (res.rowCount !== 1) {
+    .then((result) => {
+      if (result.rowCount !== 1) {
         return Promise.reject({
           status: 404,
-          msg: 'Nothing deleted - Restaurant ID does not exist',
+          msg: 'Nothing deleted - Comment ID does not exist',
         });
+      } else {
+        return result.rows
       }
     });
 };
 
 exports.deleteReviewById = (review_id) => {
-  console.log(review_id)
   return db
     .query(
       `DELETE FROM reviews
@@ -189,13 +190,13 @@ exports.deleteReviewById = (review_id) => {
       [review_id]
     )
     .then((result) => {
-      console.log(result)
-      return result.rows
-      // if (result.rowCount !== 1) {
-      //   return Promise.reject({
-      //     status: 404,
-      //     msg: 'Nothing deleted - Review ID does not exist',
-      //   });
-      // }
+      if (result.rowCount !== 1) {
+        return Promise.reject({
+          status: 404,
+          msg: 'Nothing deleted - Review ID does not exist',
+        });
+      } else {
+        return result.rows
+      }
     });
 };

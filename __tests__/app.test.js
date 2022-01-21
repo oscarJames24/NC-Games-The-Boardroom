@@ -134,7 +134,7 @@ describe('api/comments/:comment_id - delete', () => {
         .delete('/api/comments/79')
         .expect(404)
         .then((res) => {
-          expect(res.body.msg).toBe('Nothing deleted - Restaurant ID does not exist');
+          expect(res.body.msg).toBe('Nothing deleted - Comment ID does not exist');
         });
     });
   });
@@ -335,7 +335,7 @@ describe('/api/reviews/:review_id', () => {
         .delete('/api/reviews/79')
         .expect(404)
         .then((res) => {
-          expect(res.body.msg).toBe('Nothing deleted - Restaurant ID does not exist');
+          expect(res.body.msg).toBe('Nothing deleted - Review ID does not exist');
         });
     });
   });

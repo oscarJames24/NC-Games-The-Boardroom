@@ -36,8 +36,11 @@ describe('/api/categories', () => {
   });
 });
 
-describe(`/api/reviews/:review_id`, () => {
-  describe('GET', () => {
+describe(`GET /api/reviews/:review_id`, () => {
+
+    // TO ADD:
+    // - [ ] Status 400, invalid ID, e.g. string of "not-an-id"
+    //- [ ] Status 404, non existent ID, e.g. 0 or 9999
     test(`status 200: returns object with "reviews" key with array of objects with required keys `, () => {
       return request(app)
         .get('/api/reviews/2')
@@ -58,8 +61,51 @@ describe(`/api/reviews/:review_id`, () => {
           });
         });
     });
+})
+
+describe('PATCH - api/review/:review_id ', () => {
+  //ADD
+  // - [ ] Status 400, invalid ID, e.g. string of "not-an-id"
+  // - [ ] Status 400, invalid inc_votes type, e.g. property is not a number
+  // - [ ] Status 404, non existent ID, e.g. 0 or 9999
+  // - [ ] Status 200, missing `inc_votes` key. No effect to article.
+
+  test('Status 200: should amend reviews vote count by indicated amount - +1', () => {
+    const voteUpdate = { inc_votes: 1 };
+    return request(app)
+      .patch('/api/review/1')
+      .send(voteUpdate)
+      .expect(200)
+      .then((res) => {
+        expect(res.body.review).toBeInstanceOf(Object);
+        expect(res.body.review).toEqual({
+          review_id: 1,
+          title: 'Agricola',
+          designer: 'Uwe Rosenberg',
+          owner: 'mallionaire',
+          review_img_url:
+            'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
+          review_body: 'Farmyard fun!',
+          category: 'euro game',
+          created_at: '2021-01-18T00:00:00.000Z',
+          votes: 2,
+        });
+      });
   });
-  describe('QUERIES', () => {
+});
+
+describe('GET - /api/reviews', () => {
+
+  // SPLIT INTO SEPERATE TESTS:
+  // - [ ] Status 200, default sort & order: `created_at`, `desc`
+  // - [ ] Status 200, accepts `sort_by` query, e.g. `?sort_by=votes`
+  // - [ ] Status 200, accepts `order` query, e.g. `?order=desc`
+  // - [ ] Status 200, accepts `category` query, e.g. `?category=dexterity`
+  // - [ ] Status 400. invalid `sort_by` query, e.g. `?sort_by=bananas`
+  // - [ ] Status 400. invalid `order` query, e.g. `?order=bananas`
+  // - [ ] Status 404. non-existent `category` query, e.g. `?category=bananas`
+  // - [ ] Status 200. valid `category` query, but has no reviews responds with an empty array of reviews, e.g. `?category=children's games`
+
     test(`status 200: SORT BY DEFAULT - returns array of objects sorted by default of date in desc order`, () => {
       return request(app)
         .get('/api/reviews')
@@ -100,8 +146,12 @@ describe(`/api/reviews/:review_id`, () => {
         });
     });
   });
-  describe('GET - review comments by ID', () => {
-    // MOVE THIS CODE UP TO OTHER GET REQUEST BY ID??
+
+describe('GET - /api/reviews/:review_id/comments', () => {
+  // TO ADD
+  // - [ ] Status 400, invalid ID, e.g. string of "not-an-id"
+  // - [ ] Status 404, non existent ID, e.g. 0 or 9999
+  // - [ ] Status 200, valid ID, but has no comments responds with an empty array of comments
     test('status 200: return array of comments by review_id with required comment properties', () => {
       return request(app)
         .get(`/api/reviews/3/comments`)
@@ -122,10 +172,59 @@ describe(`/api/reviews/:review_id`, () => {
         });
     });
   });
-});
 
-describe('api/comments/:comment_id - delete', () => {
-  describe('DELETE', () => {
+describe('POST - api/reviews/:review_id/comments', () => {
+  // ADD 
+  // - [ ] Status 400, invalid ID, e.g. string of "not-an-id"
+  // - [ ] Status 404, non existent ID, e.g. 0 or 9999
+  // - [ ] Status 404, username does not exist
+  // - [ ] Status 201, ignores unnecessary properties
+
+
+    test('status 201: requestbody accepts an object with username and body and responds with the posted comment', () => {
+      return request(app)
+        .post(`/api/reviews/3/comments`)
+        .send({
+          username: 'mallionaire',
+          body: 'Woof woof gruff',
+        })
+        .expect(201)
+        .then((res) => {
+          console.log(res.body, 'res in testing');
+          const newComment = res.body.body;
+          expect(newComment).toBe('Woof woof gruff');
+        });
+    });
+  
+    test('status 400: missing field - returns error message', () => {
+      return request(app)
+        .post('/api/reviews/3/comments')
+        .send({
+          username: 'mallionaire',
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe('Invalid input - missing fields'); // use this with handlepsqlerrors
+        });
+    });
+  
+    test('status 400: extra fields - returns error message', () => {
+      return request(app)
+        .post('/api/reviews/3/comments')
+        .send({
+          username: 'Mallionaire',
+          body: 'Woof woof gruff',
+          extra_field: 'extra comment',
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe('Invalid input - extra fields submitted'); // use this with handlepsqlerrors
+        });
+    });
+  });
+describe('DELETE - api/comments/:comment_id', () => {
+// TO ADD
+// - [ ] Status 400, invalid ID, e.g "not-an-id"
     test('status 204: deletes specified comment from database and returns no content', () => {
       return request(app).delete('/api/comments/1').expect(204);
     });
@@ -137,78 +236,14 @@ describe('api/comments/:comment_id - delete', () => {
           expect(res.body.msg).toBe('Nothing deleted - Comment ID does not exist');
         });
     });
-  });
 });
 
-describe('api/reviews/:review_id/comments - POST', () => {
-  test('status 201: requestbody accepts an object with username and body and responds with the posted comment', () => {
-    return request(app)
-      .post(`/api/reviews/3/comments`)
-      .send({
-        username: 'mallionaire',
-        body: 'Woof woof gruff',
-      })
-      .expect(201)
-      .then((res) => {
-        console.log(res.body, 'res in testing');
-        const newComment = res.body.body;
-        expect(newComment).toBe('Woof woof gruff');
-      });
-  });
-
-  test('status 400: missing field - returns error message', () => {
-    return request(app)
-      .post('/api/reviews/3/comments')
-      .send({
-        username: 'mallionaire',
-      })
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe('Invalid input - missing fields'); // use this with handlepsqlerrors
-      });
-  });
-
-  test('status 400: extra fields - returns error message', () => {
-    return request(app)
-      .post('/api/reviews/3/comments')
-      .send({
-        username: 'Mallionaire',
-        body: 'Woof woof gruff',
-        extra_field: 'extra comment',
-      })
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe('Invalid input - extra fields submitted'); // use this with handlepsqlerrors
-      });
-  });
+describe('GET /api', () => {
+  // ADD UPDATED ENDPOINTS TO JSON - keep these maintained as you add!
+  //  - [ ] Status 200, JSON describing all the available endpoints
 });
 
-describe('PATCH - api/review/:review_id ', () => {
-  test('Status 200: should amend reviews vote count by indicated amount - +1', () => {
-    const voteUpdate = { inc_votes: 1 };
-    return request(app)
-      .patch('/api/review/1')
-      .send(voteUpdate)
-      .expect(200)
-      .then((res) => {
-        expect(res.body.review).toBeInstanceOf(Object);
-        expect(res.body.review).toEqual({
-          review_id: 1,
-          title: 'Agricola',
-          designer: 'Uwe Rosenberg',
-          owner: 'mallionaire',
-          review_img_url:
-            'https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png',
-          review_body: 'Farmyard fun!',
-          category: 'euro game',
-          created_at: '2021-01-18T00:00:00.000Z',
-          votes: 2,
-        });
-      });
-  });
-});
-
-describe('/api/users', () => {
+describe('GET /api/users', () => {
   describe('GET', () => {
     test('should respond with an array of objects with the username property', () => {
       return request(app)
@@ -226,10 +261,12 @@ describe('/api/users', () => {
     });
   });
 });
-// ADD ERROR TESTS  - invalid url? What else?
 
-describe('/api/users/:username', () => {
-  describe('GET', () => {
+describe('GET /api/users/:username', () => {
+  // TO ADD
+  // - [ ] Status 404, non existent ID, e.g 999
+  // - [ ] Status 400, invalid ID, e.g "not-an-id"
+
     test('Status 200: should take username and respond with an object of username details with required keys', () => {
       return request(app)
         .get('/api/users/bainesface')
@@ -243,12 +280,14 @@ describe('/api/users/:username', () => {
           });
         });
     });
-  });
 });
-// ADD IN:  INVALID USERNAME TEST // USER EXISTS BUT MISSING FIELDS?
 
-describe('api/comments/:comment_id', () => {
-  describe('PATCH', () => {
+
+describe('PATCH - api/comments/:comment_id', () => {
+  // - [ ] Status 400, invalid ID, e.g. string of "not-an-id"
+  // - [ ] Status 400, invalid inc_votes type, e.g. property is not a number
+  // - [ ] Status 404, non existent ID, e.g. 0 or 9999
+  // - [ ] Status 200, missing `inc_votes` key. No effect to comment.
     test('Status 200: should amend specified comment vote count by indicated amount - +1', () => {
       const voteUpdate = { inc_votes: 1 };
       return request(app)
@@ -268,11 +307,11 @@ describe('api/comments/:comment_id', () => {
           });
         });
     });
-  });
-  // ADD TESTS TO DECREASE AMOUNT w. DIFFERENT COMMENT IDS // INVALID COMMENT ID
 });
-describe('api/reviews', () => {
-  describe('POST', () => {
+describe('POST - api/reviews', () => {
+  // TO ADD
+  // REVIEW PREV POST
+  // ADD REVIEWS - BODY TOO LONG // WRONG URL? // TOO FEW FIELDS // TOO MANY FIELDS
     test('status 201: requestbody accepts an object with: owner, title, review_body, designer, category and responds with the posted review with prev properties plus: review_id, votes, created_at, comment_count', () => {
       return request(app)
         .post(`/api/reviews/`)
@@ -301,12 +340,11 @@ describe('api/reviews', () => {
           });
         });
     });
-  });
 });
-// ADD REVIEWS - BODY TOO LONG // WRONG URL? // TOO FEW FIELDS // TOO MANY FIELDS
 
-describe('/api/categories', () => {
-  describe('POST', () => {
+
+describe('POST/api/categories', () => {
+ // CHECK POST REQUIREMENTS FROM OTHER TESTS
     test('Status 201:  accepts object and returns object of newly added category', () => {
       return request(app)
         .post('/api/categories')
@@ -322,12 +360,11 @@ describe('/api/categories', () => {
           });
         });
     });
-  });
 });
 
-describe('/api/reviews/:review_id', () => {
-  describe('DELETE', () => {
-    test.only('status 204: deletes specified review from database and returns no content', () => {
+describe('DELETE - /api/reviews/:review_id', () => {
+  // CHECK TESTS FROM OTHER DELETE BLOCKS
+    test('status 204: deletes specified review from database and returns no content', () => {
       return request(app).delete('/api/reviews/3').expect(204);
     });
     test('status:404 and returns an error message to say couldnt delete as ID does not exist', () => {
@@ -338,5 +375,4 @@ describe('/api/reviews/:review_id', () => {
           expect(res.body.msg).toBe('Nothing deleted - Review ID does not exist');
         });
     });
-  });
 });

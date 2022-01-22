@@ -41,12 +41,11 @@ describe(`GET /api/reviews/:review_id`, () => {
     // TO ADD:
     // - [ ] Status 400, invalid ID, e.g. string of "not-an-id"
     //- [ ] Status 404, non existent ID, e.g. 0 or 9999
-    test(`status 200: returns object with "reviews" key with array of objects with required keys `, () => {
+    test.only(`status 200: returns object with "reviews" key with array of objects with required keys `, () => {
       return request(app)
         .get('/api/reviews/2')
         .expect(200)
         .then((res) => {
-          console.log;
           expect(res.body.reviews).toEqual({
             review_id: expect.any(Number),
             title: expect.any(String),
@@ -60,6 +59,25 @@ describe(`GET /api/reviews/:review_id`, () => {
             comment_count: expect.any(Number),
           });
         });
+    });
+
+    test('400: returns "Bad Request. Invalid ID." when id is in the wrong data type ', () => {
+      // this one should get picked up by psql error
+      return request(app)
+      .get('/api/reviews/notanId')
+      .expect(400)
+      .then((res => {
+        expect(res.body.msg).toEqual('Bad Request - Invalid Input')
+      }))
+      
+    });
+    test('404: returns "ID does not exist" when id does not exist', () => {
+      return request(app)
+      .get('/api/reviews/763')
+      .expect(404)
+      .then((res => {
+        expect(res.body.msg).toEqual('Invalid URL - Page does not exist')
+      }))
     });
 })
 

@@ -47,9 +47,4 @@ app.use(handlePsqlErrors);
 app.use(handleCustomErrors);
 app.use(handleServerErrors);
 
-const { PORT = 9090 } = process.env;
-app.listen(9090, () => {
-  console.log('listening on 9090');
-});
-
 module.exports = app;

@@ -7,7 +7,7 @@ exports.handlePsqlErrors = (err, req, res, next) => {
   console.log(err, 'gets to psql')
 
   if (err.code === '22P02') {
-    res.status(400).send({ msg: 'Bad Requst' });
+    res.status(400).send({ msg: 'Bad Request - Invalid Input' });
   } else if (err.code === '23503') {
     res.status(400).send({ msg: 'Invalid input - extra fields submitted' });
   } else if (err.code === '23502') {

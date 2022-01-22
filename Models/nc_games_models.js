@@ -20,7 +20,7 @@ exports.fetchReviewById = (review_ID) => {
       [review_ID]
     )
     .then((res) => {
-      return res.rows[0];
+      return res.rows[0]
     });
 };
 

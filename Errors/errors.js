@@ -1,10 +1,10 @@
-exports.handle404s = (req, res) => {
-  console.log('gets to 404s')
+exports.handle404s = (err, req, res) => {
   res.status(404).send({ msg: 'Invalid URL - Page does not exist' });
 };
 
 exports.handlePsqlErrors = (err, req, res, next) => {
   console.log(err, 'gets to psql')
+  console.log(err.code)
 
   if (err.code === '22P02') {
     res.status(400).send({ msg: 'Bad Request - Invalid Input' });

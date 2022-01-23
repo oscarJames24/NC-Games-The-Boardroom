@@ -29,7 +29,7 @@ const seed = (data) => {
       .then(() => {
         return db.query(`
     CREATE TABLE users (
-        username VARCHAR(255) PRIMARY KEY,
+        username VARCHAR(55) PRIMARY KEY,
         avatar_url VARCHAR(2048) NOT NULL,
         name VARCHAR(255) NOT NULL
     );`);

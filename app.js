@@ -8,7 +8,7 @@ const {
   deleteComment,
   postCommentByReviewId,
   patchReviewVotes,
-  getAllEndPoints,
+  getApi,
   getAllUsers,
   getUserDataByUsername,
   patchCommentVotes,
@@ -26,14 +26,14 @@ const app = express();
 
 app.use(express.json());
 
-app.get('/api', getAllEndPoints);
+app.get('/api', getApi);
 app.get(`/api/categories`, getAllCategories);
 app.get(`/api/reviews/:review_id`, getReviewById);
 app.get(`/api/reviews`, getReviewsSorted);
 app.get(`/api/reviews/:review_id/comments`, getCommentsByReviewId);
 app.delete(`/api/comments/:comment_id`, deleteComment);
 app.post(`/api/reviews/:review_id/comments`, postCommentByReviewId);
-app.patch(`/api/review/:review_id`, patchReviewVotes);
+app.patch(`/api/reviews/:review_id`, patchReviewVotes);
 app.get('/api/users', getAllUsers);
 app.get('/api/users/:username', getUserDataByUsername);
 app.patch(`/api/comments/:comment_id`, patchCommentVotes);

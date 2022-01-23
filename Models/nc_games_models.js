@@ -103,12 +103,13 @@ exports.fetchCommentsByReviewId = (review_id) => {
       queryValues.push(category);
     }
     queryString += ` ORDER BY ${sort_by} ${order}`;
+    console.log(queryString, 'line106')
   
     return db.query(queryString, queryValues).then(({ rows }) => {
       if (category) {
         return checkCategoryExists(category).then((res) => {
           if (res === 0) {
-            return Promise.reject({ status: 400, msg: 'Bad Request - category does not exist' });
+            return Promise.reject({ status: 404, msg: 'Bad Request - category does not exist' });
           } else {
             return rows;
           }
@@ -170,14 +171,7 @@ exports.removeCommentById = (comment_id) => {
       [comment_id]
     )
     .then((result) => {
-      if (result.rowCount !== 1) {
-        return Promise.reject({
-          status: 404,
-          msg: 'Nothing deleted - Comment ID does not exist',
-        });
-      } else {
         return result.rows
-      }
     });
 };
 

@@ -10,9 +10,11 @@ exports.checkCategoryExists = (category) => {
         })
 }
 
-exports.CheckUserExists = (username) => {
+exports.checkUserExists = (username) => {
+    // INSERT LOGIC HERE TO MATCH SEED REQUIREMENTS ON USERNAME - ie if username too long then reject for invalid user
     return db.query('SELECT * FROM users WHERE username=$1;', [username])
     .then(({rows}) => {
+        console.log(rows)
         if (rows.length) {
             return true
         } else {
@@ -21,9 +23,10 @@ exports.CheckUserExists = (username) => {
     })
 }
 
-exports.CheckReviewExists = (review_id) => {
+exports.checkReviewExists = (review_id) => {
     return db.query('SELECT * FROM reviews WHERE review_id=$1;', [review_id])
     .then(({rows}) => {
+        console.log(rows)
         if (rows.length) {
             return true
         } else {
@@ -31,7 +34,7 @@ exports.CheckReviewExists = (review_id) => {
         }
     })
 }
-exports.CheckCommentExists = (comment_id) => {
+exports.checkCommentExists = (comment_id) => {
     return db.query('SELECT * FROM comments WHERE comment_id=$1;', [comment_id])
     .then(({rows}) => {
         if (rows.length) {

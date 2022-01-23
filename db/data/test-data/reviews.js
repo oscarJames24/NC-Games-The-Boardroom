@@ -137,7 +137,7 @@ module.exports = [
       'Spend 30 minutes just setting up all of the boards (!) meeple and decks, just to forget how to play. Scythe can be a lengthy game but really packs a punch if you put the time in. With beautiful artwork, countless scenarios and clever game mechanics, this board game is a must for any board game fanatic; just make sure you explain ALL the rules before you start playing with first timers or you may find they bring it up again and again.',
     category: 'social deduction',
     created_at: new Date(1611311824839),
-    votes: 100
+    votes: 99
   },
   {
     title: "Settlers of Catan: Don't Settle For Less",

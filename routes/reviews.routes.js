@@ -13,7 +13,7 @@ const {
   getCommentsByReviewId,
 } = require('../Controllers/comments.controller');
 
-const reviewsRouter = express.router();
+const reviewsRouter = express.Router();
 
 reviewsRouter.route('/').get(getReviewsSorted).post(postNewReview);
 reviewsRouter.route('/:review_id').get(getReviewById).patch(patchReviewVotes).delete(deleteReview);

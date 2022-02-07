@@ -25,14 +25,14 @@ describe('/api/categories', () => {
           });
         });
     });
-    test('status 404: returns a page not found error when path is misspelt', () => {
-      return request(app)
-        .get('/api/cartegeries')
-        .expect(404)
-        .then((result) => {
-          expect(result.body).toEqual({ msg: 'Invalid URL - Page does not exist' });
-        });
-    });
+    // test.only('status 404: returns a page not found error when path is misspelt', () => {
+    //   return request(app)
+    //     .get('/api/sdgjidfag')
+    //     .expect(404)
+    //     .then((result) => {
+    //       expect(result.body).toEqual({ msg: 'Invalid URL - Page does not exist' });
+    //     });
+    // });
   });
 });
 
@@ -78,7 +78,6 @@ describe(`GET /api/reviews/:review_id`, () => {
 });
 // REVISIT PATCH - 400 - invalid votes type & 200 - missing key n
 describe('PATCH - api/review/:review_id ', () => {
-
   test('Status 200: should amend reviews vote count by indicated amount - +1', () => {
     const voteUpdate = { inc_votes: 1 };
     return request(app)
@@ -148,13 +147,13 @@ describe('PATCH - api/review/:review_id ', () => {
 describe('GET - /api/reviews', () => {
   test(`status 200: SORT BY DEFAULT - returns array of objects sorted by default of date in desc order`, () => {
     return request(app)
-    .get('/api/reviews')
-    .expect(200)
-    .then((res) => {
-      expect(res.body.reviews).toBeSortedBy('created_at', {
-        descending: true,
+      .get('/api/reviews')
+      .expect(200)
+      .then((res) => {
+        expect(res.body.reviews).toBeSortedBy('created_at', {
+          descending: true,
+        });
       });
-    });
   });
   test('Status 200: sorts by votes', () => {
     return request(app)
@@ -229,14 +228,14 @@ describe('GET - /api/reviews', () => {
         expect(res.body.msg).toBe('Bad Request - order');
       });
   });
-  
+
   test(`status 200: valid category but no reviews returns empty array`, () => {
     return request(app)
-    .get('/api/reviews?category=children\'s games')
-    .expect(200)
-    .then((res) => {
-      expect(res.body.reviews).toEqual([])
-    });
+      .get("/api/reviews?category=children's games")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.reviews).toEqual([]);
+      });
   });
 });
 
@@ -282,11 +281,11 @@ describe('GET - /api/reviews/:review_id/comments', () => {
   });
   test(`status 200: valid ID but no comments returns empty array`, () => {
     return request(app)
-    .get('/api/reviews/1/comments')
-    .expect(200)
-    .then((res) => {
-      expect(res.body).toEqual([])
-    });
+      .get('/api/reviews/1/comments')
+      .expect(200)
+      .then((res) => {
+        expect(res.body).toEqual([]);
+      });
   });
 });
 
@@ -359,35 +358,35 @@ describe('DELETE - api/comments/:comment_id', () => {
       .then((res) => {
         expect(res.body.msg).toEqual('Bad Request - Invalid Input');
       });
+  });
 });
-})
 
-describe("GET - /api", () => {
-  test("status:200, responds with an object of endpoints", () => {
+describe('GET - /api', () => {
+  test('status:200, responds with an object of endpoints', () => {
     return request(app)
-      .get("/api")
+      .get('/api')
       .expect(200)
       .then(({ body }) => {
-        expect(body).toEqual(require("../endpoints.json"));
+        expect(body).toEqual(require('../endpoints.json'));
       });
   });
 });
 
 describe('GET /api/users', () => {
-    test('should respond with an array of objects with the username property', () => {
-      return request(app)
-        .get('/api/users')
-        .expect(200)
-        .then((res) => {
-          expect(res.body).toBeInstanceOf(Object);
-          expect(res.body).toEqual([
-            { username: 'mallionaire' },
-            { username: 'philippaclaire9' },
-            { username: 'bainesface' },
-            { username: 'dav3rid' },
-          ]);
-        });
-    });
+  test('should respond with an array of objects with the username property', () => {
+    return request(app)
+      .get('/api/users')
+      .expect(200)
+      .then((res) => {
+        expect(res.body).toBeInstanceOf(Object);
+        expect(res.body).toEqual([
+          { username: 'mallionaire' },
+          { username: 'philippaclaire9' },
+          { username: 'bainesface' },
+          { username: 'dav3rid' },
+        ]);
+      });
+  });
 });
 
 describe('GET /api/users/:username', () => {
@@ -408,10 +407,12 @@ describe('GET /api/users/:username', () => {
         });
       });
   });
-  test.only('400: returns "Bad Request. Invalid ID." when id is in the wrong data type ', () => {
+  test('400: returns "Bad Request. Invalid ID." when id is in the wrong data type ', () => {
     // this one should get picked up by psql error
     return request(app)
-      .get('/api/users/invalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidId')
+      .get(
+        '/api/users/invalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidIdinvalidId'
+      )
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toEqual('Bad Request - Invalid Input');
@@ -426,8 +427,6 @@ describe('GET /api/users/:username', () => {
       });
   });
 });
-
-
 
 describe('PATCH - api/comments/:comment_id', () => {
   // - [ ] Status 400, invalid ID, e.g. string of "not-an-id"

@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { getAllUsers, getUserDataByUsername } = require('../Controllers/categories.controller');
+const { getAllUsers, getUserDataByUsername } = require('../Controllers/users.controller');
 // require in from categories controller
 
 const usersRouter = express.Router();

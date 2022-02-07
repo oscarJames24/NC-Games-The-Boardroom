@@ -25,28 +25,28 @@ exports.removeCommentById = (comment_id) => {
     });
 };
 
-// exports.fetchCommentsByReviewId = (review_id) => {
-//   return db
-//     .query(
-//       `SELECT comment_id, votes, created_at, author, body FROM comments
-//       WHERE review_id=$1`,
-//       [review_id]
-//     )
-//     .then((res) => {
-//       return res.rows;
-//     });
-// };
+exports.fetchCommentsByReviewId = (review_id) => {
+  return db
+    .query(
+      `SELECT comment_id, votes, created_at, author, body FROM comments
+      WHERE review_id=$1`,
+      [review_id]
+    )
+    .then((res) => {
+      return res.rows;
+    });
+};
 
-// exports.insertCommentByReviewId = (review_id, newComment) => {
-//   const { username, body } = newComment;
-//   return db
-//     .query(`INSERT INTO comments (author, review_id, body) VALUES ($1, $2, $3) RETURNING*;`, [
-//       username,
-//       review_id,
-//       body,
-//     ])
-//     .then((res) => {
-//       console.log(res);
-//       return res.rows[0];
-//     });
-// };
+exports.insertCommentByReviewId = (review_id, newComment) => {
+  const { username, body } = newComment;
+  return db
+    .query(`INSERT INTO comments (author, review_id, body) VALUES ($1, $2, $3) RETURNING*;`, [
+      username,
+      review_id,
+      body,
+    ])
+    .then((res) => {
+      console.log(res);
+      return res.rows[0];
+    });
+};

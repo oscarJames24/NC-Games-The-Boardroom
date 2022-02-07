@@ -8,12 +8,10 @@ const { getApiDocumentation } = require('../Controllers/api.controller');
 
 const apiRouter = express.Router();
 
+apiRouter.get('/', getApiDocumentation);
 apiRouter.use('/categories', categoriesRouter);
 apiRouter.use('/reviews', reviewsRouter);
 apiRouter.use('/comments', commentsRouter);
 apiRouter.use('/users', usersRouter);
-apiRouter.use('/', getApiDocumentation);
-
-// apiRoute for getDocumentation????
 
 module.exports = apiRouter;

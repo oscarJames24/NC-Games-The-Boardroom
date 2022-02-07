@@ -1,4 +1,5 @@
 const db = require('../db/connection');
+const { checkCategoryExists } = require('../Utility/functions');
 
 exports.fetchReviewById = (review_ID) => {
   return db

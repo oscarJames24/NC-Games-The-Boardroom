@@ -14,6 +14,19 @@
       ]
     }
   },
+  "POST /api/categories": {
+    "description": "posts a new category as an array into the database",
+    "queries": [],
+    "exampleResponse": {
+      "categories": [
+        {
+          "description": "Players attempt to uncover each other's hidden role",
+          "slug": "Social deduction"
+        }
+      ]
+    }
+  },
+
   "GET /api/reviews": {
     "description": "serves an array of all reviews",
     "queries": ["category", "sort_by", "order"],
@@ -27,6 +40,124 @@
           "category": "hidden-roles",
           "created_at": 1610964101251,
           "votes": 5
+        }
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id": {
+    "description": "serves specific review by review_id",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": [
+        {
+          "owner": "happyamy2016",
+          "title": "One Night Ultimate Werewolf",
+          "review_id": 1,
+          "review_body": "review body",
+          "designer": "Akihisa Okui",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": 1610964101251,
+          "votes": 5,
+          "comment_count": 1
+        }
+      ]
+    }
+  },
+  "PATCH /api/reviews/:review_id": {
+    "description": "updates review votes by specific review_id and increases votes property",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": [
+        {
+          "owner": "happyamy2016",
+          "title": "One Night Ultimate Werewolf",
+          "review_id": 1,
+          "review_body": "review body",
+          "designer": "Akihisa Okui",
+          "review_img_url": "https://images.pexels.com/photos/5350049/pexels-photo-5350049.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260",
+          "category": "hidden-roles",
+          "created_at": 1610964101251,
+          "votes": 6,
+          "comment_count": 1
+        }
+      ]
+    }
+  },
+  "GET /api/reviews/:review_id/comments": {
+    "description": "serves an array of all comments on a specific review by review_id",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": [
+        {
+          "comment_id": 1,
+          "votes": 5,
+          "created_at": 1610964101251,
+          "author": "Wilma Reilly",
+          "body": "amazing family fun"
+        }
+      ]
+    }
+  },
+  "POST /api/reviews/:review_id/comments": {
+    "description": "posts a new comment to a review by specified review_id",
+    "queries": [],
+    "exampleResponse": {
+      "reviews": [
+        {
+          "comment_id": 11,
+          "votes": 0,
+          "created_at": 1610964101251,
+          "author": "Wilma Reilly",
+          "body": "woof woof"
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/comment_id": {
+    "description": "deletes a specified comment by comment_id from the database - no response sent",
+    "queries": []
+  },
+  "DELETE /api/reviews/review_id": {
+    "description": "deletes a specified comment by comment_id from the database - no response sent",
+    "queries": []
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "wilmareilly"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "serves an array of the specified user by username",
+    "queries": [],
+    "exampleResponse": {
+      "user": [
+        {
+          "username": "wilmareilly",
+          "avatar_id": "https://www.wilmasface.com/avatar_link.png",
+          "name": "Wilma Reilly"
+        }
+      ]
+    }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "patches/updates an existing comment by comment_id and increases/decreases the votes property by the specified amount",
+    "queries": [],
+    "exampleResponse": {
+      "comment": [
+        {
+          "comment_id": 1,
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "votes": 17,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": "2020-04-05T23:00:00.000Z"
         }
       ]
     }

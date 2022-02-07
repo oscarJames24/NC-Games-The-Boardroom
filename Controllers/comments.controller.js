@@ -3,7 +3,7 @@ const {
   removeCommentById,
   insertCommentByReviewId,
   updatedCommentVotes,
-} = require('../models/comments.models.js');
+} = require('../Models/comments.models.js');
 
 const { checkReviewExists, checkCommentExists } = require('../Utility/functions');
 

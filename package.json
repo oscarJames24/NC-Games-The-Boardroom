@@ -27,6 +27,7 @@
     "express": "^4.17.2",
     "pg": "^8.7.1",
     "pg-format": "^1.0.4",
+    "react-router-dom": "^6.2.1",
     "supertest": "^6.2.1"
   },
   "devDependencies": {

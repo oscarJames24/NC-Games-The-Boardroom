@@ -372,6 +372,7 @@ describe('GET - /api', () => {
   });
 });
 
+// need to expand toEqual to add avatar_urls too
 describe('GET /api/users', () => {
   test('should respond with an array of objects with the username property', () => {
     return request(app)

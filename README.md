@@ -81,51 +81,100 @@ I recommend the Google Chrome extension [JSON Viewer](https://chrome.google.com/
 ## Available endpoints
 
 ```http
+GET /api
 GET /api/categories
 POST /api/categories
+GET /api/reviews
 GET /api/reviews/:review_id
 PATCH /api/reviews/:review_id
-GET /api/reviews
 GET /api/reviews/:review_id/comments
 POST /api/reviews/:review_id/comments
-DELETE /api/comments/:comment_id
 DELETE /api/reviews/review_id
-GET /api
+PATCH /api/comments/:comment_id
+DELETE /api/comments/:comment_id
 GET /api/users
 GET /api/users/:username
-PATCH /api/comments/:comment_id
 ```
 
 ---
 
-#### **GET /api/topics**
+#### **GET /api**
 
 Responds with:
 
-- an array of topic objects, each of which should have the following properties:
+- JSON describing all the available endpoints on your API, see the [endpoints.json](./endpoints.json) for an (incomplete) example. <<<<<< CHECK IF NEED TO UPDATE THIS?
+
+---
+
+#### **GET /api/categories**
+
+Responds with:
+
+- an array of categories objects, each of which should have the following properties:
   - `slug`
   - `description`
 
 ---
 
-#### **GET /api/articles/:article_id**
+#### **POST /api/categories**
+
+Request body accepts:
+
+- an object with the following properties:
+  - `slug`
+  - `description`
+
+Responds with:
+
+- the posted category
+
+---
+
+
+#### **GET /api/reviews**
+
+Responds with:
+
+- a `reviews` array of reviews objects, each of which should have the following properties:
+  - `owner` which is the `username` from the users table
+  - `title`
+  - `review_id`
+  - `review_body`
+  - `designer`
+  - `review_img_url`
+  - `category`
+  - `created_at`
+  - `votes`
+  - `comment_count` 
+
+Accepts queries:
+
+- `sort_by`, which sorts the articles by any valid column (defaults to date)
+- `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
+- `categories`, which filters the reviews by the category value specified in the query
+
+---
+
+#### **GET /api/reviews/:review_id**
 
 Responds with:
 
 - an article object, which should have the following properties:
 
-  - `author` which is the `username` from the users table
+  - `owner` which is the `username` from the users table
   - `title`
-  - `article_id`
-  - `body`
-  - `topic`
+  - `review_id`
+  - `review_body`
+  - `designer`
+  - `review_img_url`
+  - `category`
   - `created_at`
   - `votes`
   - `comment_count` which is the total count of all the comments with this article_id
 
 ---
 
-#### **PATCH /api/articles/:article_id**
+#### **PATCH /api/reviews/:review_id**
 
 Request body accepts:
 
@@ -133,44 +182,18 @@ Request body accepts:
 
   - `newVote` will indicate how much the `votes` property in the database should be updated by
 
-  e.g.
-
-  `{ inc_votes : 1 }` would increment the current article's vote property by 1
-
-  `{ inc_votes : -100 }` would decrement the current article's vote property by 100
-
 Responds with:
 
-- the updated article
+- the updated review with amended vote count
 
 ---
 
-#### **GET /api/articles**
+
+#### **GET /api/reviews/:review_id/comments**
 
 Responds with:
 
-- an `articles` array of article objects, each of which should have the following properties:
-  - `author` which is the `username` from the users table
-  - `title`
-  - `review_id`
-  - `topic`
-  - `created_at`
-  - `votes`
-  - `comment_count` which is the total count of all the comments with this article_id - you should make use of queries to the database in order to achieve this
-
-Should accept queries:
-
-- `sort_by`, which sorts the articles by any valid column (defaults to date)
-- `order`, which can be set to `asc` or `desc` for ascending or descending (defaults to descending)
-- `topic`, which filters the articles by the topic value specified in the query
-
----
-
-#### **GET /api/articles/:article_id/comments**
-
-Responds with:
-
-- an array of comments for the given `article_id` of which each comment should have the following properties:
+- an array of comments for the given `review_id` of which each comment has the following properties:
   - `comment_id`
   - `votes`
   - `created_at`
@@ -179,7 +202,7 @@ Responds with:
 
 ---
 
-#### **POST /api/articles/:article_id/comments**
+#### **POST /api/reviews/:review_id/comments**
 
 Request body accepts:
 
@@ -190,6 +213,31 @@ Request body accepts:
 Responds with:
 
 - the posted comment
+
+---
+
+#### **DELETE /api/reviews/:review_id**
+
+Should:
+
+- delete the given comment by `comment_id`
+
+Responds with:
+
+- status 204 and no content
+
+
+#### **PATCH /api/comments/:comment_id**
+
+Request body accepts:
+
+- an object in the form `{ inc_votes: newVote }`
+
+  - `newVote` indicates how much the `votes` property in the database should be updated by
+
+Responds with:
+
+- the updated comment with amended vote count
 
 ---
 
@@ -205,13 +253,7 @@ Responds with:
 
 ---
 
-#### **GET /api**
 
-Responds with:
-
-- JSON describing all the available endpoints on your API, see the [endpoints.json](./endpoints.json) for an (incomplete) example. <<<<<< CHECK IF NEED TO UPDATE THIS?
-
----
 
 #### **GET /api/users**
 

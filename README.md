@@ -14,7 +14,7 @@ You can access the API at: [Heroku](https://the-boardroom.herokuapp.com/api)
 
 ### Prerequisites
 
-- Node.js LTS 16.13.x [Node.js](https://nodejs.org/en/)
+- Node.js LTS 16.13.x [Node.js](https://nodejs.org/en/)herok
 - PostgreSQL 12.9 [psql](https://www.postgresql.org/)
 
 ### Dependencies
@@ -34,21 +34,13 @@ You can access the API at: [Heroku](https://the-boardroom.herokuapp.com/api)
 
 - In your terminal:
 
-        $ git clone https://github.com/BigYoSpeck/bys-news.git = AMEND HERE <<<<<<<<<<<<<
-        $ cd bys-news
+        $ git clone https://github.com/oscarJames24/NC-Games-The-Boardroom.git
 
 ## Running the Application
 
 - Initialising in Node
 
         $ npm install
-
-<!-- - Installing dependencies
-
-        $ npm install dotenv
-        $ npm install express --save
-        $ npm install pg
-        $ npm install pg-format -->
 
 - Installing dev dependencies
 
@@ -74,7 +66,7 @@ To run the dev environment
 
         $ npm run dev
 
-This can then be accessed at [http://127.0.0.1:9090/api](http://127.0.0.1:9090/api)  <<<< CHECK THIS .........
+This can then be accessed at [http://127.0.0.1:9090/api](http://127.0.0.1:9090/api) 
 
 I recommend the Google Chrome extension [JSON Viewer](https://chrome.google.com/webstore/detail/json-viewer/gbmdgpbipfallnflgajpaliibnhdgobh) for inspecting the available endpoints.
 

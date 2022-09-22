@@ -1,7 +1,5 @@
 # The Boardroom API
 
-# find and replace all article with review / re-arrange endpoints order / amend and add in missing descriptions
-
 ## Built by Oscar James (https://github.com/oscarJames24)
 
 ## Description
@@ -14,7 +12,7 @@ You can access the API at: [Heroku](https://the-boardroom.herokuapp.com/api)
 
 ### Prerequisites
 
-- Node.js LTS 16.13.x [Node.js](https://nodejs.org/en/)herok
+- Node.js LTS 16.13.x [Node.js](https://nodejs.org/en/)
 - PostgreSQL 12.9 [psql](https://www.postgresql.org/)
 
 ### Dependencies
@@ -34,13 +32,21 @@ You can access the API at: [Heroku](https://the-boardroom.herokuapp.com/api)
 
 - In your terminal:
 
-        $ git clone https://github.com/oscarJames24/NC-Games-The-Boardroom.git
+        $ git clone https://github.com/BigYoSpeck/bys-news.git = AMEND HERE <<<<<<<<<<<<<
+        $ cd bys-news
 
 ## Running the Application
 
 - Initialising in Node
 
         $ npm install
+
+- Installing dependencies
+
+        $ npm install dotenv
+        $ npm install express --save
+        $ npm install pg
+        $ npm install pg-format -->
 
 - Installing dev dependencies
 
@@ -70,6 +76,7 @@ This can then be accessed at [http://127.0.0.1:9090/api](http://127.0.0.1:9090/a
 
 I recommend the Google Chrome extension [JSON Viewer](https://chrome.google.com/webstore/detail/json-viewer/gbmdgpbipfallnflgajpaliibnhdgobh) for inspecting the available endpoints.
 
+
 ## Available endpoints
 
 ```http
@@ -94,7 +101,7 @@ GET /api/users/:username
 
 Responds with:
 
-- JSON describing all the available endpoints on your API, see the [endpoints.json](./endpoints.json) for an (incomplete) example. <<<<<< CHECK IF NEED TO UPDATE THIS?
+- JSON describing all the available endpoints on your API, see the [endpoints.json](./endpoints.json) for an example.
 
 ---
 
@@ -127,17 +134,16 @@ Responds with:
 
 Responds with:
 
-- a `reviews` array of reviews objects, each of which should have the following properties:
+  - a `reviews` array of reviews objects, each of which should have the following properties:
   - `owner` which is the `username` from the users table
   - `title`
-  - `review_id`
-  - `review_body`
-  - `designer`
-  - `review_img_url`
-  - `category`
+  - `article_id`
+  - `body`
+  - `topic`
   - `created_at`
   - `votes`
-  - `comment_count` 
+  - `comment_count` which is the total count of all the comments with this article_id - you should make use of queries to the database in order to achieve this
+
 
 Accepts queries:
 
@@ -163,7 +169,7 @@ Responds with:
   - `created_at`
   - `votes`
   - `comment_count` which is the total count of all the comments with this article_id
-
+  
 ---
 
 #### **PATCH /api/reviews/:review_id**
@@ -186,6 +192,7 @@ Responds with:
 Responds with:
 
 - an array of comments for the given `review_id` of which each comment has the following properties:
+
   - `comment_id`
   - `votes`
   - `created_at`
@@ -194,7 +201,7 @@ Responds with:
 
 ---
 
-#### **POST /api/reviews/:review_id/comments**
+#### **POST /api/articles/:article_id/comments**
 
 Request body accepts:
 
@@ -244,8 +251,6 @@ Responds with:
 - status 204 and no content
 
 ---
-
-
 
 #### **GET /api/users**
 

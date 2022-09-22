@@ -32,7 +32,7 @@ You can access the API at: [Heroku](https://the-boardroom.herokuapp.com/api)
 
 - In your terminal:
 
-        $ git clone https://github.com/BigYoSpeck/bys-news.git = AMEND HERE <<<<<<<<<<<<<
+        $ git clone https://github.com/TBCTBC
         $ cd bys-news
 
 ## Running the Application
@@ -134,7 +134,7 @@ Responds with:
 
 Responds with:
 
-  - a `reviews` array of reviews objects, each of which should have the following properties:
+ - a `reviews` array of reviews objects, each of which should have the following properties:
   - `owner` which is the `username` from the users table
   - `title`
   - `article_id`

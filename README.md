@@ -1,6 +1,6 @@
 # The Boardroom API
 
-## Built by Oscar James (https://github.com/oscarJames24)
+## Built by Oscar James (https://github.com/oljames2488)
 
 ## Description
 
@@ -32,8 +32,7 @@ You can access the API at: [Heroku](https://the-boardroom.herokuapp.com/api)
 
 - In your terminal:
 
-        $ git clone https://github.com/TBCTBC
-        $ cd bys-news
+        $ git clone https://github.com/oljames2488/NC-Games-Boardroom.git
 
 ## Running the Application
 
@@ -54,9 +53,11 @@ You can access the API at: [Heroku](https://the-boardroom.herokuapp.com/api)
         $ npm i -D supertest
         $ npm i -D nodemon
 
-You will need to create _two_ `.env` files for the app: `.env.test` and `.env.development`. Into `.env.test` add `PGDATABASE=<database_name_here>` with your choice of database name for both the dev and test environment.
+You will need to create _two_ `.env` files for the app: `.env.test` and `.env.development`. 
 
-There is a provided `db` folder with some data, a [setup.sql](./db/setup.sql) file and a `seeds` folder.
+Into `.env.test` add `PGDATABASE=nc_games_test`
+Into `.env.development` add `PGDATABASE=nc_games`
+
 
 - Setup database
 
